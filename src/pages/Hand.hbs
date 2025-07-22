@@ -1,0 +1,193 @@
+<!DOCTYPE html> <!-- Declares the document type and version (HTML5) -->
+<html lang="en"> <!-- Begins the HTML document with language set to English -->
+<head>
+    <meta charset="UTF-8"> <!-- Sets character encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Makes page responsive -->
+    <title>HAND Score Tracker - Developed by Ammar A</title> <!-- Title shown in the browser tab -->
+
+    <!-- Embedded CSS styling -->
+    <style>
+        body {
+            /* Sets a repeating background image aligned to the top-right */
+            background-image: url('https://cdn.glitch.global/1013c782-88ef-472c-867d-1d1f3955c264/PL.jpg?v=1733804047611');
+            background-size: 20%;
+            background-position: top right;
+            background-repeat: repeat-y;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+           /* background: #f4f4f4; /* Light gray fallback background color... if this is choosen, the image wont show */
+        }
+
+        h2 {
+            text-align: center; /* Center-aligns the main heading */
+        }
+
+        .hidden {
+            display: none; /* Utility class to hide elements */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #fff; /* White background for the table */
+        }
+
+        th, td {
+            border: 1px solid #ccc; /* Light gray border around table cells */
+            padding: 8px;
+            text-align: center;
+        }
+
+        input[type="number"], input[type="text"] {
+            padding: 5px;
+            width: 90%; /* Inputs take up most of their container's width */
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+
+<body>
+  <!-- Main title -->
+  <h2>Hand Score Tracker - Developed by Ammar A</h2>
+
+  <!-- Section to input number of players -->
+  <div id="playerCountDiv">
+    <label>Number of players: </label>
+    <input type="number" id="playerCount" min="2" max="10" style="width: 50px;" /> <br>
+    <button onclick="setupNameInputs()">Next</button> <!-- Calls JS function on click -->
+  </div>
+
+  <!-- Section to enter player names (initially hidden) -->
+  <div id="playerNamesDiv" class="hidden">
+    <form id="nameForm"></form> <!-- Form where player name fields are inserted -->
+    <button onclick="startGame()">Start Game</button>
+  </div>
+
+  <!-- Score entry and scoreboard section (initially hidden) -->
+  <div id="scoreSection" class="hidden">
+    <h3>Enter Round Scores</h3>
+    <form id="scoreForm"></form> <!-- Form where score inputs are dynamically inserted -->
+    <button onclick="submitScores()">Submit Round</button>
+
+    <h3>Scoreboard</h3>
+    <table id="scoreTable">
+      <thead>
+        <tr id="scoreHeader">
+          <th>Round</th> <!-- Round header -->
+        </tr>
+      </thead>
+      <tbody id="scoreBody">
+        <!-- Score rows get added here -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- JavaScript Section -->
+  <script>
+    // Declare global variables
+    let playerNames = [];       // Array to store player names
+    let totalScores = [];       // Array to store running total scores
+    let roundNumber = 1;        // Keeps track of the current round
+    let playerCount = 0;        // Number of players
+
+    // Called when "Next" button is clicked
+    function setupNameInputs() {
+      playerCount = parseInt(document.getElementById("playerCount").value); // Read number of players
+
+      if (isNaN(playerCount) || playerCount < 2 || playerCount > 10) {
+        alert("Please enter a valid number of players between 2 and 10.");
+        return;
+      }
+
+      // Dynamically create name input fields
+      const nameForm = document.getElementById("nameForm");
+      nameForm.innerHTML = ""; // Clear any previous inputs
+
+      for (let i = 0; i < playerCount; i++) {
+        nameForm.innerHTML += `
+          <label>Player ${i + 1} Name:</label>
+          <input type="text" id="name${i}" required /><br>
+        `;
+      }
+
+      // Hide number of players section, show name input section
+      document.getElementById("playerCountDiv").classList.add("hidden");
+      document.getElementById("playerNamesDiv").classList.remove("hidden");
+    }
+
+    // Called when "Start Game" button is clicked
+    function startGame() {
+      playerNames = [];
+      totalScores = Array(playerCount).fill(0); // Initialize scores with zeros
+
+      // Collect all player names
+      for (let i = 0; i < playerCount; i++) {
+        const name = document.getElementById(`name${i}`).value.trim();
+        if (!name) {
+          alert("Please fill in all player names.");
+          return;
+        }
+        playerNames.push(name);
+      }
+
+      // Create input fields for score entry, add "<label>${name}:</label>"  for the orifinal labeling 
+      const scoreForm = document.getElementById("scoreForm");
+      scoreForm.innerHTML = "";
+      playerNames.forEach((name, idx) => {
+        scoreForm.innerHTML += ` 
+      <label style="display: inline-block; width: 150px; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}:</label>
+  
+          <input type="number" id="score${idx}"style="width: 150px;" />
+          
+<br>
+        `;
+      });
+
+      // Add player names to table header
+      const scoreHeader = document.getElementById("scoreHeader");
+      playerNames.forEach(name => {
+        const th = document.createElement("th");
+        th.textContent = name;
+        scoreHeader.appendChild(th);
+      });
+
+      // Hide name section, show score section
+      document.getElementById("playerNamesDiv").classList.add("hidden");
+      document.getElementById("scoreSection").classList.remove("hidden");
+    }
+
+    // Called when "Submit Round" button is clicked
+    function submitScores() {
+      const row = document.createElement("tr"); // Create new row for the scoreboard
+      row.innerHTML = `<td>${roundNumber}</td>`; // First cell is round number
+
+      for (let i = 0; i < playerNames.length; i++) {
+        const scoreInput = document.getElementById(`score${i}`);
+        const roundScore = parseInt(scoreInput.value);
+        const valid = !isNaN(roundScore);
+
+        // Update total score if valid number
+        totalScores[i] += valid ? roundScore : 0;
+
+        // Add score and updated total to table row
+        row.innerHTML += `<td>${valid ? roundScore : "-"}<br><small>Total: ${totalScores[i]}</small></td>`;
+
+        scoreInput.value = ""; // Clear input for next round
+      }
+
+      // Append new row to the scoreboard
+      document.getElementById("scoreBody").appendChild(row);
+      roundNumber++; // Move to next round
+    }
+  </script>
+</body>
+</html>
+
+<br>
+<!-- Back to home link -->
+<a href="/">Back to Home</a>

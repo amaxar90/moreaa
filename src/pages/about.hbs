@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trix Score Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f7f7f7;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    form {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, select, button {
+      margin-top: 5px;
+      padding: 5px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .round-details {
+      margin-top: 15px;
+      padding: 10px;
+      border: 1px dashed #aaa;
+      background: #fafafa;
+    }
+    table {
+      width: 100%;
+      max-width: 800px;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Trix Score Tracker</h1>
+
+  <!-- Player Names Form -->
+  <form id="playerForm">
+    <h2>Enter Player Names</h2>
+    <label for="player1">Player 1:</label>
+    <input type="text" id="player1" required />
+    <label for="player2">Player 2:</label>
+    <input type="text" id="player2" required />
+    <label for="player3">Player 3:</label>
+    <input type="text" id="player3" required />
+    <label for="player4">Player 4:</label>
+    <input type="text" id="player4" required />
+    <button type="button" onclick="setPlayers()">Save Player Names</button>
+  </form>
+
+  <!-- Round Input Form (hidden until players are set) -->
+  <form id="roundForm" class="hidden">
+    <h2>New Round</h2>
+    <label for="gameMode">Select Game Mode:</label>
+    <select id="gameMode" onchange="updateRoundInputs()">
+      <option value="">-- Select a game mode --</option>
+      <option value="kingOfHearts">King of Hearts</option>
+      <option value="queens">Queens</option>
+      <option value="diamonds">Diamonds</option>
+      <option value="collections">Collections</option>
+      <option value="trix">Trix</option>
+    </select>
+
+    <div id="roundInputs" class="round-details"></div>
+    <button type="button" onclick="recordRound()">Record Round</button>
+  </form>
+
+  <!-- Scoreboard Table -->
+  <h2>Scoreboard</h2>
+  <table id="scoreboard">
+    <thead>
+      <tr>
+        <th>Round</th>
+        <th>Game Mode</th>
+        <th id="p1header"></th>
+        <th id="p2header"></th>
+        <th id="p3header"></th>
+        <th id="p4header"></th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    let players = [];
+    let roundNumber = 1;
+    let cumulativeScores = [0, 0, 0, 0];
+    let roundsHistory = [];
+
+    function setPlayers() {
+      players = ["player1", "player2", "player3", "player4"].map(id => document.getElementById(id).value.trim());
+      if (players.some(name => name === "")) {
+        alert("Please enter all player names.");
+        return;
+      }
+      document.getElementById("playerForm").classList.add("hidden");
+      document.getElementById("roundForm").classList.remove("hidden");
+      ["p1header", "p2header", "p3header", "p4header"].forEach((id, i) => {
+        document.getElementById(id).innerText = players[i];
+      });
+    }
+
+    function updateRoundInputs() {
+      const game = document.getElementById("gameMode").value;
+      const container = document.getElementById("roundInputs");
+      container.innerHTML = "";
+      if (game === "kingOfHearts") {
+        container.innerHTML = `<p>Who took the King of Hearts?</p>`;
+        players.forEach((p, i) => {
+          container.innerHTML += `<label><input type="radio" name="kofh" value="${i}"> ${p}</label><br>`;
+        });
+        container.innerHTML += `<p>Who fed it?</p>`;
+        players.forEach((p, i) => {
+          container.innerHTML += `<label><input type="radio" name="kofhFeeder" value="${i}"> ${p}</label><br>`;
+        });
+        container.innerHTML += `<label><input type="checkbox" id="kofhDouble"> Double?</label>`;
+      }
+      else if (game === "queens") {
+        players.forEach((p, i) => {
+          container.innerHTML += `<label>${p}: Number of Queens <input type="number" id="q_${i}" value="0" min="0" max="4" style="width:50px;">` +
+            ` Doubled? <input type="checkbox" id="qd_${i}"></label><br>`;
+        });
+        container.innerHTML += `<p>Feeder for each doubled queen:</p>`;
+        players.forEach((p, i) => {
+          container.innerHTML += `<label>${p}: <select id="qf_${i}"><option value="">--</option>` +
+            players.map((f, fi) => `<option value="${fi}">${f}</option>`).join('') +
+            `</select></label><br>`;
+        });
+      }
+      else if (game === "diamonds" || game === "collections") {
+        let label = game === "diamonds" ? "Diamonds (-10 each)" : "Collections (-15 each)";
+        players.forEach((p, i) => {
+          container.innerHTML += `<label>${p}: <input type="number" id="dc_${i}" value="0" min="0" style="width:50px;"></label><br>`;
+        });
+      }
+      else if (game === "trix") {
+        players.forEach((p, i) => {
+          container.innerHTML += `<label>${p}: <select id="trix_${i}"><option value="">--</option>` +
+            `<option value="200">1st (200)</option><option value="150">2nd (150)</option>` +
+            `<option value="100">3rd (100)</option><option value="50">4th (50)</option></select></label><br>`;
+        });
+      }
+    }
+
+    function recordRound() {
+      const game = document.getElementById("gameMode").value;
+      let scores = [0, 0, 0, 0];
+
+      if (game === "kingOfHearts") {
+        const taker = [...document.getElementsByName("kofh")].find(r => r.checked);
+        const feeder = [...document.getElementsByName("kofhFeeder")].find(r => r.checked);
+        const doubled = document.getElementById("kofhDouble").checked;
+        if (!taker || !feeder) return alert("Select both taker and feeder.");
+        let t = parseInt(taker.value), f = parseInt(feeder.value);
+        scores[t] = doubled ? -150 : -75;
+        scores[f] = doubled ? +75 : 0;
+      }
+
+      else if (game === "queens") {
+        let totalQueens = 0;
+        for (let i = 0; i < 4; i++) {
+          let q = parseInt(document.getElementById(`q_${i}`).value);
+          let doubled = document.getElementById(`qd_${i}`).checked;
+          let feeder = document.getElementById(`qf_${i}`).value;
+          if (isNaN(q)) return alert("Invalid queen count");
+          totalQueens += q;
+          if (doubled && feeder === "") return alert("Select feeder for doubled queen.");
+          scores[i] -= q * (doubled ? 50 : 25);
+          if (doubled && feeder !== "") scores[parseInt(feeder)] += 25 * q;
+        }
+        if (totalQueens !== 4) return alert("Total queens must equal 4.");
+      }
+
+      else if (game === "diamonds" || game === "collections") {
+        let total = 0, multiplier = game === "diamonds" ? 10 : 15;
+        for (let i = 0; i < 4; i++) {
+          let v = parseInt(document.getElementById(`dc_${i}`).value);
+          if (isNaN(v)) return alert("Invalid count");
+          total += v;
+          scores[i] -= v * multiplier;
+        }
+        if (total !== 13) return alert("Total must equal 13.");
+      }
+
+      else if (game === "trix") {
+        let assigned = new Set();
+        for (let i = 0; i < 4; i++) {
+          let val = document.getElementById(`trix_${i}`).value;
+          if (val === "" || assigned.has(val)) return alert("Assign all unique positions");
+          assigned.add(val);
+          scores[i] = parseInt(val);
+        }
+      }
+
+      for (let i = 0; i < 4; i++) cumulativeScores[i] += scores[i];
+
+      roundsHistory.push({ round: roundNumber++, gameMode: game, scores: [...scores], totals: [...cumulativeScores] });
+      updateScoreboard();
+      document.getElementById("gameMode").value = "";
+      document.getElementById("roundInputs").innerHTML = "";
+    }
+
+    function updateScoreboard() {
+      const tbody = document.querySelector("#scoreboard tbody");
+      tbody.innerHTML = "";
+      roundsHistory.forEach(data => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${data.round}</td>
+          <td>${formatGameMode(data.gameMode)}</td>
+          <td>${data.scores[0]}<br><small>Total: ${data.totals[0]}</small></td>
+          <td>${data.scores[1]}<br><small>Total: ${data.totals[1]}</small></td>
+          <td>${data.scores[2]}<br><small>Total: ${data.totals[2]}</small></td>
+          <td>${data.scores[3]}<br><small>Total: ${data.totals[3]}</small></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function formatGameMode(mode) {
+      return {
+        kingOfHearts: "King of Hearts",
+        queens: "Queens",
+        diamonds: "Diamonds",
+        collections: "Collections",
+        trix: "Trix"
+      }[mode] || mode;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MORE Score Tracker - Developed by Ammar A</title>
+    <style>
+        body {
+            background-image: url('https://cdn.glitch.global/1013c782-88ef-472c-867d-1d1f3955c264/PL.jpg?v=1733804047611');
+            background-size: 20%;
+            background-position: top right;
+            background-repeat: repeat-y;
+        }
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 4px;
+            text-align: center;
+        }
+        th, td {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>MORE Score Tracker - Developed by Ammar A</h1>
+
+    <!-- Input form to add players and record round results -->
+    <form id="scoreForm">
+        <label for="player1">Player 1: </label>
+        <input type="text" id="player1" required><br><br>
+
+        <label for="player2">Player 2: </label>
+        <input type="text" id="player2" required><br><br>
+
+        <label for="player3">Player 3: </label>
+        <input type="text" id="player3" required><br><br>
+
+        <label for="dealerName">Select Dealer: </label>
+        <select id="dealerName" required>
+            <option value="">Select Dealer</option>
+        </select><br><br>
+
+        <label for="ardPoints1" id="ardLabel1">Player 1 Ard:&nbsp;&nbsp;&nbsp; </label>
+        <input type="number" id="ardPoints1" required><br>
+
+        <label for="handPoints1" id="handLabel1">Player 1 Hand: </label>
+        <input type="number" id="handPoints1" required><br><br>
+
+        <label for="ardPoints2" id="ardLabel2">Player 2 Ard:&nbsp;&nbsp;&nbsp; </label>
+        <input type="number" id="ardPoints2" required><br>
+
+        <label for="handPoints2" id="handLabel2">Player 2 Hand: </label>
+        <input type="number" id="handPoints2" required><br><br>
+
+        <label for="ardPoints3" id="ardLabel3">Player 3 Ard:&nbsp;&nbsp;&nbsp; </label>
+        <input type="number" id="ardPoints3" required><br>
+
+        <label for="handPoints3" id="handLabel3">Player 3 Hand: </label>
+        <input type="number" id="handPoints3" required><br><br>
+
+        <button type="button" onclick="recordRound()">Record Round</button>
+    </form>
+
+    <!-- Table to display game results -->
+    <h2>Game Results</h2>
+    <table id="gameResults">
+        <thead>
+            <tr>
+                <th>Round</th>
+                <th id="player1Title">Player 1</th>
+                <th id="player2Title">Player 2</th>
+                <th id="player3Title">Player 3</th>
+                <th>Dealer</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Round results will be dynamically added here -->
+        </tbody>
+    </table>
+   <br>
+<button type="button" onclick="resetScores()">Reset Scores</button> <br>
+    <script>
+        let round = 1;
+        let accumulatedPlayer1 = 0;
+        let accumulatedPlayer2 = 0;
+        let accumulatedPlayer3 = 0;
+
+        // Function to record the round results
+        function recordRound() {
+            // Get input values for players' names
+            let player1 = document.getElementById("player1").value.trim();
+            let player2 = document.getElementById("player2").value.trim();
+            let player3 = document.getElementById("player3").value.trim();
+
+            // Check if player names are empty
+            if (!player1 || !player2 || !player3) {
+                alert("Please enter all player names.");
+                return;
+            }
+
+            // Get the dealer name
+            let dealerName = document.getElementById("dealerName").value;
+          // force the input of dealer name   
+         //   if (!dealerName) {
+         //       alert("Please select a dealer.");
+        //     return;
+        //  }
+
+            // Get points for all players
+            let ardPoints1 = parseFloat(document.getElementById("ardPoints1").value);
+            let handPoints1 = parseFloat(document.getElementById("handPoints1").value);
+            let ardPoints2 = parseFloat(document.getElementById("ardPoints2").value);
+            let handPoints2 = parseFloat(document.getElementById("handPoints2").value);
+            let ardPoints3 = parseFloat(document.getElementById("ardPoints3").value);
+            let handPoints3 = parseFloat(document.getElementById("handPoints3").value);
+
+            // Validate points
+            if (isNaN(ardPoints1) || isNaN(handPoints1) || isNaN(ardPoints2) || isNaN(handPoints2) || isNaN(ardPoints3) || isNaN(handPoints3)) {
+                alert("Please enter valid numbers for points.");
+                return;
+            }
+
+            // Calculate round totals for each player
+            let player1Total = ardPoints1 + handPoints1;
+            let player2Total = ardPoints2 + handPoints2;
+            let player3Total = ardPoints3 + handPoints3;
+
+            // Update accumulated totals
+            accumulatedPlayer1 += player1Total;
+            accumulatedPlayer2 += player2Total;
+            accumulatedPlayer3 += player3Total;
+
+            // Add new row to table
+            let table = document.getElementById("gameResults").getElementsByTagName('tbody')[0];
+
+            // Create a new row
+            let newRow = table.insertRow();
+
+            // Round number cell
+            let roundCell = newRow.insertCell(0);
+            roundCell.innerHTML = round;
+
+            // Player 1 cell with Ard, Hand, and SUM
+            let player1Cell = newRow.insertCell(1);
+            player1Cell.innerHTML = `
+                Ard: ${ardPoints1}<br>
+                Hand: ${handPoints1}<br>
+                SUM: ${accumulatedPlayer1}
+            `;
+
+            // Player 2 cell with Ard, Hand, and SUM
+            let player2Cell = newRow.insertCell(2);
+            player2Cell.innerHTML = `
+                Ard: ${ardPoints2}<br>
+                Hand: ${handPoints2}<br>
+                SUM: ${accumulatedPlayer2}
+            `;
+
+            // Player 3 cell with Ard, Hand, and SUM
+            let player3Cell = newRow.insertCell(3);
+            player3Cell.innerHTML = `
+                Ard: ${ardPoints3}<br>
+                Hand: ${handPoints3}<br>
+                SUM: ${accumulatedPlayer3}
+            `;
+
+            // Dealer cell
+            let dealerCell = newRow.insertCell(4);
+            dealerCell.innerHTML = dealerName;
+
+            // Check if any player has won
+            if (accumulatedPlayer1 >= 3100 || accumulatedPlayer2 >= 3100 || accumulatedPlayer3 >= 3100) {
+                let winner;
+                if (accumulatedPlayer1 > accumulatedPlayer2 && accumulatedPlayer1 > accumulatedPlayer3) {
+                    winner = `The winner is Player 1 (${player1})`;
+                } else if (accumulatedPlayer2 > accumulatedPlayer1 && accumulatedPlayer2 > accumulatedPlayer3) {
+                    winner = `The winner is Player 2 (${player2})`;
+                } else if (accumulatedPlayer3 > accumulatedPlayer1 && accumulatedPlayer3 > accumulatedPlayer2) {
+                    winner = `The winner is Player 3 (${player3})`;
+                } else {
+                    winner = "It's a tie!";
+                }
+                alert(`Game Over!  ${winner}`);
+                return;
+            }
+
+            // Clear input fields except for player names
+            document.getElementById("ardPoints1").value = '';
+            document.getElementById("handPoints1").value = '';
+            document.getElementById("ardPoints2").value = '';
+            document.getElementById("handPoints2").value = '';
+            document.getElementById("ardPoints3").value = '';
+            document.getElementById("handPoints3").value = '';
+            document.getElementById("dealerName").value = '';
+
+            // Increment round number
+            round++;
+
+            // Update player names in table headers dynamically
+            updateTableHeaders(player1, player2, player3);
+            updateFormLabels(player1, player2, player3);
+        }
+
+        // Function to dynamically update the player names in the table header
+        function updateTableHeaders(player1, player2, player3) {
+            document.getElementById("player1Title").innerHTML = ` ${player1}`;
+            document.getElementById("player2Title").innerHTML = ` ${player2}`;
+            document.getElementById("player3Title").innerHTML = ` ${player3}`;
+        }
+
+        // Function to dynamically update the labels for Ard and Hand
+        function updateFormLabels(player1, player2, player3) {
+            document.getElementById("ardLabel1").innerHTML = `${player1} Ard:&nbsp;&nbsp;&nbsp; `;
+            document.getElementById("handLabel1").innerHTML = `${player1} Hand: `;
+            document.getElementById("ardLabel2").innerHTML = `${player2} Ard:&nbsp;&nbsp;&nbsp; `;
+            document.getElementById("handLabel2").innerHTML = `${player2} Hand: `;
+            document.getElementById("ardLabel3").innerHTML = `${player3} Ard:&nbsp;&nbsp;&nbsp; `;
+            document.getElementById("handLabel3").innerHTML = `${player3} Hand: `;
+        }
+
+        // Populate the dealer select dropdown based on player names
+        function updateDealerSelect() {
+            let players = [
+                document.getElementById("player1").value,
+                document.getElementById("player2").value,
+                document.getElementById("player3").value
+            ];
+
+            let dealerSelect = document.getElementById("dealerName");
+            dealerSelect.innerHTML = '<option value="">Select Dealer</option>'; // Reset options
+
+            players.forEach(player => {
+                if (player) {
+                    let option = document.createElement("option");
+                    option.value = player;
+                    option.textContent = player;
+                    dealerSelect.appendChild(option);
+                }
+            });
+        }
+
+        // Event listener to update the dealer dropdown whenever players' names change
+        document.getElementById("player1").addEventListener("input", updateDealerSelect);
+        document.getElementById("player2").addEventListener("input", updateDealerSelect);
+        document.getElementById("player3").addEventListener("input", updateDealerSelect);
+  
+   function resetScores() {
+            accumulatedTeam1 = 0;
+            accumulatedTeam2 = 0;
+            let table = document.getElementById("gameResults").getElementsByTagName('tbody')[0];
+            table.innerHTML = '';  // Clears the table rows
+
+            round = 1;
+
+            // Optionally, reset the form input fields for points and dealer
+            document.getElementById("ardPoints1").value = '';
+            document.getElementById("handPoints1").value = '';
+            document.getElementById("ardPoints2").value = '';
+            document.getElementById("handPoints2").value = '';
+            document.getElementById("dealerName").value = '';
+        } 
+  
+  
+  </script>
+
+</body>
+</html>
+<br>
+<a href="/">Back to Home</a> 

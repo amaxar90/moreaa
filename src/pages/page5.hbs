@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Baloot Score Tracker</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    input, button {
+      font-size: 18px;
+      padding: 8px;
+      margin: 5px;
+    }
+
+    table {
+      width: 100%;
+      max-width: 500px;
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    .score-inputs {
+      margin-top: 20px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Baloot Score Tracker</h1>
+
+  <div class="score-inputs">
+    <label>Round #<span id="round-number">1</span></label><br>
+    <input type="number" id="team1-score" placeholder="Team 1 Score">
+    <input type="number" id="team2-score" placeholder="Team 2 Score">
+    <button onclick="addRound()">Add Round</button>
+  </div>
+
+  <table id="score-table">
+    <thead>
+      <tr>
+        <th>Round</th>
+        <th>Team 1</th>
+        <th>Team 2</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Total</th>
+        <th id="total-team1">0</th>
+        <th id="total-team2">0</th>
+      </tr>
+    </tfoot>
+  </table>
+
+  <script>
+    let round = 1;
+    let totalTeam1 = 0;
+    let totalTeam2 = 0;
+
+    function addRound() {
+      const team1Input = document.getElementById('team1-score');
+      const team2Input = document.getElementById('team2-score');
+      const team1Score = parseInt(team1Input.value) || 0;
+      const team2Score = parseInt(team2Input.value) || 0;
+
+      totalTeam1 += team1Score;
+      totalTeam2 += team2Score;
+
+      const tableBody = document.querySelector("#score-table tbody");
+      const newRow = document.createElement("tr");
+      newRow.innerHTML = `
+        <td>${round}</td>
+        <td>${team1Score}</td>
+        <td>${team2Score}</td>
+      `;
+      tableBody.appendChild(newRow);
+
+      document.getElementById("total-team1").textContent = totalTeam1;
+      document.getElementById("total-team2").textContent = totalTeam2;
+      document.getElementById("round-number").textContent = ++round;
+
+      team1Input.value = '';
+      team2Input.value = '';
+    }
+  </script>
+
+</body>
+</html>
+<br>
+<a href="/">Back to Home</a> 
