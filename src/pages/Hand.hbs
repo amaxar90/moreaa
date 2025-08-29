@@ -53,7 +53,7 @@
 
 <body>
   <!-- Main title -->
-  <h2>Hand Score Tracker - Developed by Ammar A</h2>
+  <h2>Hand2 Score Tracker - Developed by Ammar A</h2>
 
   <!-- Section to input number of players -->
   <div id="playerCountDiv">
@@ -74,7 +74,7 @@
     <form id="scoreForm"></form> <!-- Form where score inputs are dynamically inserted -->
     <button onclick="submitScores()">Submit Round</button>
 
-    <h3>Scoreboard</h3>
+    <h3>Scoreboard. Names will automatically get resorted based on the score</h3>
     <table id="scoreTable">
       <thead>
         <tr id="scoreHeader">
@@ -135,21 +135,20 @@
         playerNames.push(name);
       }
 
-      // Create input fields for score entry, add "<label>${name}:</label>"  for the orifinal labeling 
+      // Create input fields for score entry, add "<label>${name}:</label>" for the original labeling 
       const scoreForm = document.getElementById("scoreForm");
       scoreForm.innerHTML = "";
       playerNames.forEach((name, idx) => {
         scoreForm.innerHTML += ` 
       <label style="display: inline-block; width: 150px; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}:</label>
-  
-          <input type="number" id="score${idx}"style="width: 150px;" />
-          
+          <input type="number" id="score${idx}" style="width: 150px;" />
 <br>
         `;
       });
 
       // Add player names to table header
       const scoreHeader = document.getElementById("scoreHeader");
+      scoreHeader.innerHTML = '<th>Round</th>'; // ensure clean header
       playerNames.forEach(name => {
         const th = document.createElement("th");
         th.textContent = name;
@@ -183,6 +182,50 @@
       // Append new row to the scoreboard
       document.getElementById("scoreBody").appendChild(row);
       roundNumber++; // Move to next round
+
+      // Reorder players/columns by lowest total score first
+      reorderPlayersAndColumns();
+    }
+
+    // --- Minimal addition: keep arrays and table columns in sync after sorting ---
+    function reorderPlayersAndColumns() {
+      // Build index mapping for sort (ascending by total score)
+      const indices = playerNames.map((_, i) => i).sort((a, b) => totalScores[a] - totalScores[b]);
+
+      // Reorder the arrays
+      playerNames = indices.map(i => playerNames[i]);
+      totalScores = indices.map(i => totalScores[i]);
+
+      // Reorder existing table body columns in every past round to match new header order
+      const tbody = document.getElementById("scoreBody");
+      Array.from(tbody.querySelectorAll("tr")).forEach(tr => {
+        const playerTds = Array.from(tr.children).slice(1); // skip the "Round" cell
+        const reordered = indices.map(i => playerTds[i]);
+        // Remove current player cells
+        while (tr.children.length > 1) tr.removeChild(tr.lastChild);
+        // Append cells in new order
+        reordered.forEach(td => tr.appendChild(td));
+      });
+
+      // Rebuild the header in the new order
+      const scoreHeader = document.getElementById("scoreHeader");
+      scoreHeader.innerHTML = '<th>Round</th>';
+      playerNames.forEach(name => {
+        const th = document.createElement("th");
+        th.textContent = name;
+        scoreHeader.appendChild(th);
+      });
+
+      // Rebuild score inputs in the new order for the next round
+      const scoreForm = document.getElementById("scoreForm");
+      scoreForm.innerHTML = "";
+      playerNames.forEach((name, idx) => {
+        scoreForm.innerHTML += ` 
+      <label style="display: inline-block; width: 150px; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}:</label>
+          <input type="number" id="score${idx}" style="width: 150px;" />
+<br>
+        `;
+      });
     }
   </script>
 </body>
@@ -190,4 +233,4 @@
 
 <br>
 <!-- Back to home link -->
-<a href="/">Back to Home</a>
+<a href="/aahome">Back to Home</a>
