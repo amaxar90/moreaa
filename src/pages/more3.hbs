@@ -251,8 +251,9 @@
         document.getElementById("player3").addEventListener("input", updateDealerSelect);
   
    function resetScores() {
-            accumulatedTeam1 = 0;
-            accumulatedTeam2 = 0;
+            accumulatedplayer1 = 0;
+            accumulatedplayer2 = 0;
+            accumulatedplayer3 = 0;
             let table = document.getElementById("gameResults").getElementsByTagName('tbody')[0];
             table.innerHTML = '';  // Clears the table rows
 
@@ -263,6 +264,8 @@
             document.getElementById("handPoints1").value = '';
             document.getElementById("ardPoints2").value = '';
             document.getElementById("handPoints2").value = '';
+            document.getElementById("ardPoints3").value = '';
+            document.getElementById("handPoints3").value = '';
             document.getElementById("dealerName").value = '';
         } 
   
