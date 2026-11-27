@@ -3,27 +3,279 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#123e34"><title>Trix Scorekeeper</title>
+<meta name="theme-color" content="#153f35"><meta name="author" content="Ammar A">
+<title>Trix Scorekeeper — Developed by Ammar A</title>
 <style>
-:root{font:16px/1.5 system-ui,sans-serif;color:#19372f;background:#f7f5ed;--green:#123e34;--line:#d8d8c9;--red:#9e3848}*{box-sizing:border-box}body{margin:0}.wrap{max-width:850px;margin:auto;padding:0 18px}header{background:var(--green);color:#faf5dd;padding:24px 0;border-bottom:4px solid #bd9b58}header .wrap,.row{display:flex;align-items:center;justify-content:space-between;gap:12px}h1,h2,h3{font-family:Georgia,serif;line-height:1.15;margin:0}h1{font-size:clamp(30px,5vw,49px)}header span{font:32px Georgia;color:#dcc696}main{padding-bottom:40px!important}section,details{background:#fffef9;border:1px solid var(--line);border-radius:14px;padding:clamp(15px,3vw,28px);margin:16px 0}h2{font-size:28px}p{margin:9px 0 16px}.sub,small{color:#516559}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.scores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:15px 0}.score{border-top:2px solid #bd9b58;padding:8px;background:#f4f4eb;overflow-wrap:anywhere}.score b{display:block;font:30px Georgia}.team{font-weight:650}label{display:grid;gap:4px;font-size:.92rem;font-weight:600;min-width:0}input,select,button{font:inherit;max-width:100%}input,select{width:100%;padding:10px;background:white;color:#19372f;border:1px solid #a4b2a9;border-radius:7px;min-height:45px}button,summary{cursor:pointer}button{background:var(--green);color:white;border:0;border-radius:7px;padding:11px 16px;font-weight:650}button.alt{background:#e8eee7;color:var(--green)}button:focus-visible,summary:focus-visible{outline:3px solid #aa8242;outline-offset:2px}fieldset{border:1px solid var(--line);border-radius:8px;margin:14px 0;padding:12px}legend{font-weight:bold}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.alert{color:#922c39;font-weight:600}.alert:empty{display:none}summary{font-weight:700}.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;margin-top:12px;font-size:.9rem}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:right}th:first-child,td:first-child{text-align:left}th{overflow-wrap:anywhere}td button{padding:6px 10px}.contract{margin:15px 0}#preview{font-size:.94rem}.red{color:var(--red)}[hidden]{display:none!important}@media(max-width:550px){.scores{grid-template-columns:1fr 1fr}.row{flex-wrap:wrap}header{padding:17px 0}.grid{gap:8px}fieldset .grid{grid-template-columns:1fr}th,td{padding:6px}.wrap{padding:0 12px}}
+:root{
+  font:16px/1.5 system-ui,sans-serif;
+  color:#18352d;
+  background:#f5f3ec;
+  --green:#153f35;
+  --line:#d8ded5;
+  --red:#9e3848;
+}
+*{
+  box-sizing:border-box;
+}
+body{
+  margin:0;
+}
+.wrap{
+  max-width:900px;
+  margin:auto;
+  padding:0 18px;
+}
+header{
+  background:var(--green);
+  color:#faf5dd;
+  padding:24px 0;
+  border-bottom:1px solid var(--green);
+}
+header .wrap,.row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+h1,h2,h3{
+  font-family:Georgia,serif;
+  line-height:1.15;
+  margin:0;
+}
+h1{
+  font-size:clamp(30px,5vw,43px);
+}
+.arabic{
+  font:26px Georgia;
+  color:#d5e2d9;
+}
+main{
+  padding-bottom:40px!important;
+}
+section,details{
+  background:#fffef9;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:clamp(15px,3vw,28px);
+  margin:16px 0;
+}
+h2{
+  font-size:28px;
+}
+p{
+  margin:9px 0 16px;
+}
+.sub,small{
+  color:#516559;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.scores{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin:15px 0;
+}
+.score{
+  border-top:3px solid #679782;
+  padding:8px;
+  background:#f4f4eb;
+  overflow-wrap:anywhere;
+}
+.score b{
+  display:block;
+  font:30px Georgia;
+}
+.team{
+  font-weight:650;
+}
+label{
+  display:grid;
+  gap:4px;
+  font-size:.92rem;
+  font-weight:600;
+  min-width:0;
+}
+input,select,button{
+  font:inherit;
+  max-width:100%;
+}
+input,select{
+  width:100%;
+  padding:10px;
+  background:white;
+  color:#18352d;
+  border:1px solid #a4b2a9;
+  border-radius:7px;
+  min-height:45px;
+}
+button,summary{
+  cursor:pointer;
+}
+button{
+  background:var(--green);
+  color:white;
+  border:0;
+  border-radius:7px;
+  padding:11px 16px;
+  font-weight:650;
+}
+button.alt{
+  background:#e8eee7;
+  color:var(--green);
+}
+button:focus-visible,summary:focus-visible{
+  outline:3px solid #aa8242;
+  outline-offset:2px;
+}
+fieldset{
+  border:1px solid var(--line);
+  border-radius:8px;
+  margin:14px 0;
+  padding:12px;
+}
+legend{
+  font-weight:bold;
+}
+.actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
+.alert{
+  color:#922c39;
+  font-weight:600;
+}
+.alert:empty{
+  display:none;
+}
+summary{
+  font-weight:700;
+}
+.scroll{
+  overflow-x:auto;
+}
+table{
+  border-collapse:collapse;
+  width:100%;
+  margin-top:12px;
+  font-size:.9rem;
+}
+th,td{
+  padding:8px;
+  border-bottom:1px solid var(--line);
+  text-align:right;
+}
+th:first-child,td:first-child{
+  text-align:left;
+}
+th{
+  overflow-wrap:anywhere;
+}
+td button{
+  padding:6px 10px;
+}
+.contract{
+  margin:15px 0;
+}
+#preview{
+  font-size:.94rem;
+}
+.red{
+  color:var(--red);
+}
+[hidden]{
+  display:none!important;
+}
+@media(max-width:550px){
+  .scores{
+    grid-template-columns:1fr 1fr;
+  }
+  .row{
+    flex-wrap:wrap;
+  }
+  header{
+    padding:17px 0;
+  }
+  .grid{
+    gap:8px;
+  }
+  fieldset .grid{
+    grid-template-columns:1fr;
+  }
+  th,td{
+    padding:6px;
+  }
+  .wrap{
+    padding:0 12px;
+  }
+}
+.credit{
+  font-size:.875rem;
+  color:#d5e2d9;
+  margin:5px 0 0;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.flag{
+  position:relative;
+  display:inline-block;
+  width:54px;
+  height:27px;
+  flex:none;
+  background:linear-gradient(#171917 0 33.333%,white 33.333% 66.666%,#168050 66.666%);
+  box-shadow:0 0 0 1px #ffffff45;
+}
+.flag::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:#cc3340;
+  clip-path:polygon(0 0,45% 50%,0 100%);
+}
+a{
+  color:var(--green);
+}
+dialog{
+  width:min(360px,90vw);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:24px;
+  background:#fffef9;
+  color:var(--green);
+}
+dialog:not([open]) { display: none; }
+dialog::backdrop{
+  background:rgb(10 30 23 / 55%);
+}
+@media(max-width:480px){
+  .brand{
+    flex-direction:column;
+    gap:4px;
+  }
+  .arabic{
+    font-size:16px;
+  }
+}
 </style>
 </head>
-<body>
- <!--<header><div class="wrap"><h1>Trix Scorekeeper</h1><span lang="ar">تريكس</span></div></header> --> 
- 
- <header>
-    <div class="masthead">
-      <div>
-        <h1>MORE Score Tracker</h1>
-        <p class="credit">Developed by Ammar A</p>
-      </div>
-      <span class="flag" role="img" aria-label="Palestinian flag"></span>
-    </div>
-  </header>
- 
- <main class="wrap"><p id="storage" role="status"></p><div id="app"><section><h2>Open the scorekeeper</h2><p>Download this HTML file and open it in your browser to use the interactive scorecard.</p></section></div>
+<body><header><div class="wrap"><div><h1>Trix Scorekeeper</h1><p class="credit">Developed by Ammar A</p></div>
+<div class="brand"><span class="arabic" lang="ar">تريكس</span><span class="flag" role="img" aria-label="Palestinian flag"></span></div></div></header>
+<main class="wrap"><p id="storage" role="status"></p><div id="app"><section><h2>Open the scorekeeper</h2><p>Download this HTML file and open it in your browser to use the interactive scorecard.</p></section></div>
 <details><summary>Scoring rules</summary><p>Each player rules one kingdom and chooses all five contracts once. Play follows the seat order you enter, starting with the chosen king. Highest score wins. Partners sit opposite and combine their scores.</p>
-<ul><li>King of Hearts −75. Each queen −25.</li><li>Each diamond −10. Each trick −15.</li><li>Trix finish order earns +200, +150, +100, +50.</li><li>For an exposed (doubled) king or queen, charge the taker twice and credit the original holder the base value. If the holder takes their own card, credit whoever led that trick. When the holder also led it, the net charge is the ordinary penalty.</li></ul><a href="https://www.pagat.com/compendium/trex.html">Trix rules at Pagat</a></details></main>
+<ul><li>King of Hearts −75. Each queen −25.</li><li>Each diamond −10. Each trick −15.</li><li>Trix finish order earns +200, +150, +100, +50.</li><li>For an exposed (doubled) king or queen, charge the taker twice and credit the original holder the base value. If the holder takes their own card, credit whoever led that trick. When the holder also led it, the net charge is the ordinary penalty.</li></ul><a href="https://www.pagat.com/compendium/trex.html">Trix rules at Pagat</a></details><footer><a href="/">← Back to home</a></footer></main>
+<dialog id="finish" aria-labelledby="finish-title">
+  <h2 id="finish-title">Final scores</h2>
+  <p id="announcement"></p>
+  <button type="button" id="close-finish">Back to scorecard</button>
+</dialog>
 <script>
 'use strict';
 const app=document.getElementById('app');
@@ -117,7 +369,17 @@ function render(){
   function fields(){by('fields').innerHTML=form(by('type').value,editing>=0?rounds[ix].data:[]);preview()}
   fields();by('type').onchange=fields;by('hand').oninput=preview;
   const record=e=>{e.preventDefault();const type=by('type').value,data=readForm(type);try{score(type,data)}catch(error){by('err').textContent=error.message;return}
-   rounds[ix]={type,data};editing=-1;save();render()};
+   const completingGame = editing < 0 && ix === 19;
+   rounds[ix] = {type, data};
+   editing = -1;
+   save();
+   render();
+   if (completingGame) {
+     const dialog = by('finish');
+     by('announcement').textContent = app.querySelector('section h3').textContent;
+     if (typeof dialog.showModal === 'function') dialog.showModal();
+     else window.alert(by('announcement').textContent);
+   }};
   by('record').onclick=record;by('hand').onsubmit=record;
   if(editing>=0)by('cancel').onclick=()=>{editing=-1;render()};
  }
@@ -126,133 +388,6 @@ function render(){
  if(n)by('undo').onclick=()=>{if(confirm('Remove hand '+n+' and recalculate the score?')){rounds.pop();editing=-1;save();render()}};
  by('new').onclick=()=>{if(confirm('Start a new table? Starting the next game will replace this scorecard.')){editing=-1;setup();app.insertAdjacentHTML('afterbegin','<button class="alt" id="back">Back to current game</button>');by('back').onclick=render}};
 }
+by('close-finish').onclick = () => by('finish').close();
 render();
 </script></body></html>
-
-<br>
-<a href="/">Back to Home</a> 
-
-
-
-<!--
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Baloot Score Tracker</title>
-  <style>
-    body {
- /* Sets a repeating background image aligned to the top-right */
-            background-image: url('https://images.squarespace-cdn.com/content/v1/5b857e8b7c93275e337e599e/66c23545-6201-415d-967b-8f58b8e5b154/palestinian-flag.jpg?format=2500w');
-            background-size: 20%;
-            background-position: top right;
-            background-repeat: repeat-y;
-            font-family: Arial, sans-serif;
-            padding: 20px;
-           /* background: #f4f4f4; /* Light gray fallback background color... if this is choosen, the image wont show */
-      
-      font-family: sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-
-    input, button {
-      font-size: 18px;
-      padding: 8px;
-      margin: 5px;
-    }
-
-    table {
-      width: 100%;
-      max-width: 500px;
-      margin: 20px auto;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 10px;
-      border: 1px solid #ccc;
-    }
-
-    th {
-      background-color: #f0f0f0;
-    }
-
-    .score-inputs {
-      margin-top: 20px;
-    }
-
-  </style>
-</head>
-<body>
-
-  <h1>Baloot Score Tracker</h1>
-
-  <div class="score-inputs">
-    <label>Round #<span id="round-number">1</span></label><br>
-    <input type="number" id="team1-score" placeholder="Team 1 Score">
-    <input type="number" id="team2-score" placeholder="Team 2 Score">
-    <button onclick="addRound()">Add Round</button>
-  </div>
-
-  <table id="score-table">
-    <thead>
-      <tr>
-        <th>Round</th>
-        <th>Team 1</th>
-        <th>Team 2</th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-    <tfoot>
-      <tr>
-        <th>Total</th>
-        <th id="total-team1">0</th>
-        <th id="total-team2">0</th>
-      </tr>
-    </tfoot>
-  </table>
-
-  <script>
-    let round = 1;
-    let totalTeam1 = 0;
-    let totalTeam2 = 0;
-
-    function addRound() {
-      const team1Input = document.getElementById('team1-score');
-      const team2Input = document.getElementById('team2-score');
-      const team1Score = parseInt(team1Input.value) || 0;
-      const team2Score = parseInt(team2Input.value) || 0;
-
-      totalTeam1 += team1Score;
-      totalTeam2 += team2Score;
-
-      const tableBody = document.querySelector("#score-table tbody");
-      const newRow = document.createElement("tr");
-      newRow.innerHTML = `
-        <td>${round}</td>
-        <td>${team1Score}</td>
-        <td>${team2Score}</td>
-      `;
-      tableBody.appendChild(newRow);
-
-      document.getElementById("total-team1").textContent = totalTeam1;
-      document.getElementById("total-team2").textContent = totalTeam2;
-      document.getElementById("round-number").textContent = ++round;
-
-      team1Input.value = '';
-      team2Input.value = '';
-    }
-  </script>
-
-</body>
-</html>
-<br>
-<a href="/">Back to Home</a> 
--->
-
-
-
-
-
