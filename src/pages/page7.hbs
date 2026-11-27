@@ -1,1 +1,409 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#153f35">
+  <title>MORE Score Tracker — Developed by Ammar A</title>
+
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18352d;
+      --muted: #556860;
+      --green: #153f35;
+      --paper: #f5f3ec;
+      --panel: #fffef9;
+      --line: #d8ded5;
+      --red: #a23342;
+      font: 16px/1.45 system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); }
+    header { background: var(--green); color: white; }
+    main, .masthead { width: min(900px, 100%); margin: auto; }
+    .masthead, main { padding: 22px clamp(14px, 4vw, 32px); }
+    .masthead, .section-heading, footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    h1, h2, p { margin: 0; }
+    h1, h2, .total { font-family: Georgia, serif; }
+    h1 { font-size: clamp(1.75rem, 5vw, 2.65rem); line-height: 1.1; }
+    h2 { font-size: 1.45rem; }
+    .credit { color: #d5e2d9; font-size: .85rem; margin-top: 5px; }
+    .flag {
+      position: relative;
+      width: 54px;
+      height: 27px;
+      background: linear-gradient(#171917 0 33.333%, white 33.333% 66.666%, #168050 66.666%);
+      box-shadow: 0 0 0 1px #ffffff45;
+    }
+    .flag::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: #cc3340;
+      clip-path: polygon(0 0, 45% 50%, 0 100%);
+    }
+    section {
+      margin-bottom: 16px;
+      padding: clamp(14px, 3vw, 24px);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+    }
+    .muted, .note { color: var(--muted); font-size: .875rem; }
+    .note { margin-top: 8px; }
+    .three {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .score {
+      min-width: 0;
+      border-top: 3px solid #679782;
+      padding: 10px 6px 0;
+    }
+    .score-name, legend, th, td { overflow-wrap: anywhere; }
+    .score-name { font-weight: 650; }
+    .total {
+      display: block;
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      line-height: 1.25;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+    fieldset {
+      min-width: 0;
+      margin: 0;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    legend { font-weight: 700; padding: 0 5px; }
+    label { display: grid; gap: 4px; font-size: .9rem; font-weight: 600; }
+    .points { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    input, select, button { font: inherit; }
+    input, select {
+      width: 100%;
+      min-width: 0;
+      min-height: 44px;
+      padding: 8px;
+      border: 1px solid #96a89c;
+      border-radius: 6px;
+      color: var(--ink);
+      background: white;
+      font-size: 16px;
+    }
+    .controls {
+      display: flex;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .controls label { flex: 1 1 180px; }
+    button {
+      cursor: pointer;
+      min-height: 44px;
+      border: 0;
+      border-radius: 7px;
+      padding: 9px 18px;
+      background: var(--green);
+      color: white;
+      font-weight: 650;
+    }
+    button:hover { filter: brightness(1.12); }
+    :focus-visible { outline: 3px solid #b67b26; outline-offset: 2px; }
+    .secondary { background: #e7eae3; color: var(--ink); }
+    .result {
+      margin-top: 16px;
+      padding: 12px;
+      background: #e4f1e8;
+      border-left: 4px solid var(--green);
+      font-weight: 700;
+    }
+    .result:empty, .error:empty { display: none; }
+    .error { color: var(--red); margin-top: 8px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      font-variant-numeric: tabular-nums;
+    }
+    thead { background: #eef1e9; }
+    td small, td strong { display: block; }
+    td small { color: var(--muted); white-space: nowrap; }
+    a { color: var(--green); }
+    footer { margin-bottom: 20px; }
+    @media (max-width: 620px) {
+      #name-fields, #point-fields { grid-template-columns: 1fr; }
+      .three { gap: 8px; }
+      th, td { padding: 7px 4px; font-size: .82rem; }
+      .controls button { flex: 1 1 140px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="masthead">
+      <div>
+        <h1>MORE Score Tracker</h1>
+        <p class="credit">Developed by Ammar A</p>
+      </div>
+      <span class="flag" role="img" aria-label="Palestinian flag"></span>
+    </div>
+  </header>
+
+  <main>
+    <section aria-labelledby="totals-title">
+      <div class="section-heading">
+        <h2 id="totals-title">Scoreboard</h2>
+        <span class="muted">Target · 3,100 points</span>
+      </div>
+      <div class="three" id="scores"></div>
+      <p class="result" id="result" role="status"></p>
+    </section>
+
+    <form id="round-form">
+      <section aria-labelledby="players-title">
+        <h2 id="players-title">Players</h2>
+        <div class="three" id="name-fields"></div>
+      </section>
+
+      <section aria-labelledby="round-title">
+        <h2 id="round-title">Round 1</h2>
+        <div class="three" id="point-fields"></div>
+        <div class="controls">
+          <label>
+            Dealer (optional)
+            <select id="dealer">
+              <option value="">Select dealer</option>
+            </select>
+          </label>
+          <button type="submit">Record round</button>
+        </div>
+        <p class="error" id="error" role="alert"></p>
+      </section>
+    </form>
+
+    <section aria-labelledby="history-title">
+      <h2 id="history-title">Round history</h2>
+      <p id="empty" class="note">Recorded rounds will appear here.</p>
+      <div class="table-wrap">
+        <table id="history" hidden>
+          <thead>
+            <tr>
+              <th scope="col">Round</th>
+              <th scope="col" id="head-0">Player 1</th>
+              <th scope="col" id="head-1">Player 2</th>
+              <th scope="col" id="head-2">Player 3</th>
+              <th scope="col">Dealer</th>
+            </tr>
+          </thead>
+          <tbody id="rounds"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <a href="/">← Back to home</a>
+      <button type="button" class="secondary" id="reset">Reset scores</button>
+    </footer>
+  </main>
+
+  <script>
+    "use strict";
+
+    const seats = [0, 1, 2];
+    const target = 3100;
+    const byId = id => document.getElementById(id);
+
+    let totals = [0, 0, 0];
+    let roundCount = 0;
+
+    function element(tag, text, className) {
+      const node = document.createElement(tag);
+      if (text !== undefined) node.textContent = text;
+      if (className) node.className = className;
+      return node;
+    }
+
+    function makeInput(labelText, id, type) {
+      const label = element("label", labelText);
+      const input = element("input");
+      input.type = type;
+      input.id = id;
+      input.required = true;
+      if (type === "number") input.step = "any";
+      label.append(input);
+      return label;
+    }
+
+    function createPlayerFields(i) {
+      const placeholder = `Player ${i + 1}`;
+
+      const score = element("div", undefined, "score");
+      const name = element("span", placeholder, "score-name");
+      const total = element("strong", "0", "total");
+      name.id = `score-name-${i}`;
+      total.id = `total-${i}`;
+      score.append(name, total);
+      byId("scores").append(score);
+
+      byId("name-fields").append(
+        makeInput(placeholder, `name-${i}`, "text")
+      );
+
+      const group = element("fieldset");
+      const legend = element("legend", placeholder);
+      legend.id = `legend-${i}`;
+      const points = element("div", undefined, "points");
+      points.append(
+        makeInput("Ard", `ard-${i}`, "number"),
+        makeInput("Hand", `hand-${i}`, "number")
+      );
+      group.append(legend, points);
+      byId("point-fields").append(group);
+    }
+
+    function playerNames() {
+      return seats.map(i => byId(`name-${i}`).value.trim());
+    }
+
+    function outcome(scores, names) {
+      const best = Math.max(...scores);
+      if (best < target) return "";
+      const leaders = names.filter((_, i) => scores[i] === best);
+      return leaders.length === 1
+        ? `${leaders[0]} wins!`
+        : `Tie: ${leaders.join(" & ")}`;
+    }
+
+    function updateNames() {
+      const names = playerNames();
+      const dealer = byId("dealer");
+      const previousSeat = dealer.value;
+      dealer.replaceChildren(new Option("Select dealer", ""));
+
+      seats.forEach(i => {
+        const display = names[i] || `Player ${i + 1}`;
+        byId(`score-name-${i}`).textContent = display;
+        byId(`legend-${i}`).textContent = display;
+        byId(`head-${i}`).textContent = display;
+        if (names[i]) dealer.add(new Option(names[i], String(i)));
+      });
+
+      if (previousSeat !== "" && names[Number(previousSeat)]) {
+        dealer.value = previousSeat;
+      }
+
+      byId("result").textContent = outcome(
+        totals, names.map((n, i) => n || `Player ${i + 1}`)
+      );
+    }
+
+    function addRound(previousTotals, scores) {
+      return scores.map(([ard, hand], i) => previousTotals[i] + (ard + hand));
+    }
+
+    function appendHistory(scores, dealerName) {
+      const row = byId("rounds").insertRow();
+      row.append(element("th", String(roundCount)));
+      row.firstElementChild.scope = "row";
+
+      scores.forEach(([ard, hand], i) => {
+        const cell = row.insertCell();
+        cell.append(
+          element("small", `Ard: ${ard}`),
+          element("small", `Hand: ${hand}`),
+          element("strong", `Sum: ${totals[i]}`)
+        );
+      });
+
+      row.insertCell().textContent = dealerName || "—";
+      byId("empty").hidden = true;
+      byId("history").hidden = false;
+    }
+
+    function clearRoundInputs() {
+      seats.forEach(i => {
+        byId(`ard-${i}`).value = "";
+        byId(`hand-${i}`).value = "";
+      });
+      byId("dealer").value = "";
+      byId("error").textContent = "";
+    }
+
+    function recordRound(event) {
+      event.preventDefault();
+      const names = playerNames();
+      const blankSeat = names.findIndex(name => !name);
+
+      if (blankSeat !== -1) {
+        byId("error").textContent = "Enter a name for each player.";
+        byId(`name-${blankSeat}`).focus();
+        return;
+      }
+
+      const scores = seats.map(i => [
+        byId(`ard-${i}`).valueAsNumber,
+        byId(`hand-${i}`).valueAsNumber
+      ]);
+
+      const next = addRound(totals, scores);
+      if (!next.every(Number.isFinite)) {
+        byId("error").textContent = "Enter valid Ard and Hand points for each player.";
+        return;
+      }
+
+      const dealerSeat = byId("dealer").value;
+      const dealerName = dealerSeat === "" ? "" : names[Number(dealerSeat)];
+
+      totals = next;
+      roundCount++;
+      appendHistory(scores, dealerName);
+
+      seats.forEach(i => {
+        byId(`total-${i}`).textContent = String(totals[i]);
+      });
+      byId("result").textContent = outcome(totals, names);
+      byId("round-title").textContent = `Round ${roundCount + 1}`;
+      clearRoundInputs();
+      byId("ard-0").focus();
+    }
+
+    function resetScores() {
+      if (roundCount && !window.confirm("Clear all rounds and keep the player names?")) {
+        return;
+      }
+      totals = [0, 0, 0];
+      roundCount = 0;
+      byId("rounds").replaceChildren();
+      byId("history").hidden = true;
+      byId("empty").hidden = false;
+      byId("result").textContent = "";
+      byId("round-title").textContent = "Round 1";
+      seats.forEach(i => { byId(`total-${i}`).textContent = "0"; });
+      clearRoundInputs();
+    }
+
+    seats.forEach(createPlayerFields);
+    byId("name-fields").addEventListener("input", updateNames);
+    byId("round-form").addEventListener("submit", recordRound);
+    byId("reset").addEventListener("click", resetScores);
+    updateNames();
+  </script>
+</body>
+</html>
