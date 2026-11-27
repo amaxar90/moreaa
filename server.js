@@ -126,11 +126,19 @@ fastify.get("/page5", function (request, reply) {
   return reply.view("/src/pages/page5.hbs", { seo: seo });
 });
 
+
+
 fastify.get("/about", function (request, reply) {
   return reply.view("/src/pages/about.hbs", { seo: seo });
 });
 
+fastify.get("/page6", function (request, reply) {
+  return reply.view("/src/pages/page6.hbs", { seo: seo });
+});
 
+fastify.get("/page7", function (request, reply) {
+  return reply.view("/src/pages/page7.hbs", { seo: seo });
+});
 
 
 // Run the server and report out to the logs
