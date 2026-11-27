@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trix Kingdom Tracker V2</title>
+
+<style>
+
+:root{
+--bg:#0f1117;
+--card:#1a1d26;
+--gold:#d4af37;
+--text:#f2f2f2;
+--green:#22c55e;
+--red:#ef4444;
+}
+
+*{
+box-sizing:border-box;
+font-family:Segoe UI,Arial,sans-serif;
+}
+
+body{
+background:var(--bg);
+color:var(--text);
+margin:0;
+padding:20px;
+}
+
+h1{
+text-align:center;
+color:var(--gold);
+}
+
+.card{
+background:var(--card);
+padding:20px;
+border-radius:15px;
+margin-bottom:15px;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin:5px 0;
+border-radius:8px;
+border:none;
+}
+
+button{
+padding:10px 16px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:var(--gold);
+font-weight:bold;
+}
+
+button:hover{
+opacity:.9;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #333;
+text-align:center;
+}
+
+th{
+color:var(--gold);
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:10px;
+}
+
+.contract{
+display:inline-block;
+padding:6px 10px;
+border-radius:8px;
+margin:2px;
+font-size:12px;
+}
+
+.done{
+background:var(--red);
+}
+
+.left{
+background:var(--green);
+}
+
+.leader{
+font-size:22px;
+font-weight:bold;
+color:gold;
+}
+
+.hidden{
+display:none;
+}
+
+</style>
+</head>
+<body>
+
+<h1>♠ TRIX KINGDOM TRACKER ♥</h1>
+
+<div class="card" id="setupCard">
+
+<h2>Players</h2>
+
+<input id="p1" placeholder="Player 1">
+<input id="p2" placeholder="Player 2">
+<input id="p3" placeholder="Player 3">
+<input id="p4" placeholder="Player 4">
+
+<br><br>
+
+<button onclick="startGame()">
+Start Kingdoms
+</button>
+
+</div>
+
+<div id="gameArea" class="hidden">
+
+<div class="card">
+
+<h2>Game Status</h2>
+
+<div id="progress"></div>
+
+</div>
+
+<div class="card">
+
+<h2>Kingdom Owner</h2>
+
+<select id="ownerSelect"></select>
+
+<h3>Choose Contract</h3>
+
+<select id="contractSelect"></select>
+
+<button onclick="showEntry()">
+Enter Result
+</button>
+
+</div>
+
+<div class="card hidden" id="entryPanel">
+
+<h2>Contract Result Entry</h2>
+
+<div id="entryArea"></div>
+
+<br>
+
+<button onclick="saveRound()">
+Save Round
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Leaderboard</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Player</th>
+<th>Score</th>
+</tr>
+</thead>
+
+<tbody id="leaderboard"></tbody>
+
+</table>
+
+</div>
+
+<div class="card">
+
+<h2>Contracts Remaining</h2>
+
+<div id="contractsView"></div>
+
+</div>
+
+<div class="card">
+
+<h2>History</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>Owner</th>
+<th>Contract</th>
+<th>Details</th>
+</tr>
+</thead>
+
+<tbody id="history"></tbody>
+
+</table>
+
+</div>
+
+<button onclick="resetAll()">
+Reset Entire Game
+</button>
+
+</div>
+
+<script>
+
+let players=[];
+let scores={};
+let history=[];
+
+const CONTRACTS=[
+"King",
+"Queens",
+"Diamonds",
+"Collections",
+"Trix"
+];
+
+let remaining={};
+
+loadGame();
+
+function startGame(){
+
+players=[
+document.getElementById("p1").value || "Player 1",
+document.getElementById("p2").value || "Player 2",
+document.getElementById("p3").value || "Player 3",
+document.getElementById("p4").value || "Player 4"
+];
+
+players.forEach(p=>{
+
+scores[p]=scores[p] || 0;
+
+remaining[p]=remaining[p] || [
+"King",
+"Queens",
+"Diamonds",
+"Collections",
+"Trix"
+];
+
+});
+
+document.getElementById("setupCard").classList.add("hidden");
+document.getElementById("gameArea").classList.remove("hidden");
+
+populateOwners();
+renderAll();
+saveGame();
+
+}
+
+function populateOwners(){
+
+let owner=document.getElementById("ownerSelect");
+
+owner.innerHTML="";
+
+players.forEach(p=>{
+
+owner.innerHTML+=`
+<option>${p}</option>
+`;
+
+});
+
+updateContracts();
+
+owner.onchange=updateContracts;
+
+}
+
+function updateContracts(){
+
+let owner=
+document.getElementById("ownerSelect").value;
+
+let contractSelect=
+document.getElementById("contractSelect");
+
+contractSelect.innerHTML="";
+
+remaining[owner].forEach(c=>{
+
+contractSelect.innerHTML+=`
+<option>${c}</option>
+`;
+
+});
+
+}
+
+function showEntry(){
+
+let contract=
+document.getElementById("contractSelect").value;
+
+let html="";
+
+if(contract==="King"){
+
+players.forEach(p=>{
+
+html+=`
+<label>
+<input type="radio"
+name="king"
+value="${p}">
+${p}
+</label><br>
+`;
+
+});
+
+}
+
+if(contract==="Queens"){
+
+players.forEach(p=>{
+
+html+=`
+${p}
+<input type="number"
+min="0"
+max="4"
+value="0"
+id="q_${p}">
+<br>
+`;
+
+});
+
+}
+
+if(contract==="Diamonds"){
+
+players.forEach(p=>{
+
+html+=`
+${p}
+<input type="number"
+min="0"
+max="13"
+value="0"
+id="d_${p}">
+<br>
+`;
+
+});
+
+}
+
+if(contract==="Collections"){
+
+players.forEach(p=>{
+
+html+=`
+${p}
+<input type="number"
+min="0"
+max="13"
+value="0"
+id="c_${p}">
+<br>
+`;
+
+});
+
+}
+
+if(contract==="Trix"){
+
+for(let i=1;i<=4;i++){
+
+html+=`
+Position ${i}
+<select id="t${i}">
+${players.map(p=>
+`<option>${p}</option>`).join("")}
+</select><br>
+`;
+
+}
+
+}
+
+document.getElementById("entryArea").innerHTML=html;
+
+document
+.getElementById("entryPanel")
+.classList.remove("hidden");
+
+}
+
+function saveRound(){
+
+let owner=
+document.getElementById("ownerSelect").value;
+
+let contract=
+document.getElementById("contractSelect").value;
+
+let detail="";
+
+if(contract==="King"){
+
+let taken=
+document.querySelector('input[name="king"]:checked');
+
+if(!taken){
+alert("Select player");
+return;
+}
+
+scores[taken.value]-=75;
+
+detail=taken.value+" took King";
+
+}
+
+if(contract==="Queens"){
+
+let total=0;
+
+players.forEach(p=>{
+
+let n=
+parseInt(
+document.getElementById("q_"+p).value
+)||0;
+
+total+=n;
+
+scores[p]-=(n*25);
+
+});
+
+if(total!==4){
+alert("Must equal 4 queens");
+return;
+}
+
+detail="Queens assigned";
+
+}
+
+if(contract==="Diamonds"){
+
+let total=0;
+
+players.forEach(p=>{
+
+let n=
+parseInt(
+document.getElementById("d_"+p).value
+)||0;
+
+total+=n;
+
+scores[p]-=(n*10);
+
+});
+
+if(total!==13){
+alert("Must equal 13 diamonds");
+return;
+}
+
+detail="Diamonds assigned";
+
+}
+
+if(contract==="Collections"){
+
+let total=0;
+
+players.forEach(p=>{
+
+let n=
+parseInt(
+document.getElementById("c_"+p).value
+)||0;
+
+total+=n;
+
+scores[p]-=(n*15);
+
+});
+
+if(total!==13){
+alert("Must equal 13 tricks");
+return;
+}
+
+detail="Collections assigned";
+
+}
+
+if(contract==="Trix"){
+
+const first=
+document.getElementById("t1").value;
+
+const second=
+document.getElementById("t2").value;
+
+const third=
+document.getElementById("t3").value;
+
+const fourth=
+document.getElementById("t4").value;
+
+let set=
+new Set([
+first,
+second,
+third,
+fourth
+]);
+
+if(set.size!==4){
+
+alert(
+"Player cannot occupy two positions"
+);
+
+return;
+
+}
+
+scores[first]+=200;
+scores[second]+=150;
+scores[third]+=100;
+scores[fourth]+=50;
+
+detail=
+`${first} 1st, ${second} 2nd`;
+
+}
+
+remaining[owner]=
+remaining[owner]
+.filter(
+c=>c!==contract
+);
+
+history.push({
+
+owner,
+contract,
+detail
+
+});
+
+saveGame();
+
+renderAll();
+
+updateContracts();
+
+document
+.getElementById("entryPanel")
+.classList.add("hidden");
+
+checkWinner();
+
+}
+
+function renderAll(){
+
+let board=
+Object.entries(scores)
+.sort((a,b)=>b[1]-a[1]);
+
+document
+.getElementById("leaderboard")
+.innerHTML=
+board.map(x=>`
+
+<tr>
+<td>${x[0]}</td>
+<td>${x[1]}</td>
+</tr>
+
+`).join("");
+
+let contractsHTML="";
+
+players.forEach(p=>{
+
+contractsHTML+=`
+<h3>${p}</h3>
+`;
+
+CONTRACTS.forEach(c=>{
+
+contractsHTML+=`
+
+<span class="contract
+${remaining[p].includes(c)
+? 'left'
+: 'done'}">
+
+${c}
+
+</span>
+
+`;
+
+});
+
+});
+
+document
+.getElementById("contractsView")
+.innerHTML=
+contractsHTML;
+
+document
+.getElementById("history")
+.innerHTML=
+history.map((h,i)=>`
+
+<tr>
+<td>${i+1}</td>
+<td>${h.owner}</td>
+<td>${h.contract}</td>
+<td>${h.detail}</td>
+</tr>
+
+`).join("");
+
+let completed=history.length;
+
+document
+.getElementById("progress")
+.innerHTML=
+`
+<h3>
+Contracts Played:
+${completed}/20
+</h3>
+`;
+
+}
+
+function checkWinner(){
+
+if(history.length<20)return;
+
+let winner=
+Object.entries(scores)
+.sort((a,b)=>b[1]-a[1])[0];
+
+alert(
+"Game Complete!\nWinner: "
++winner[0]
++" ("+winner[1]+")"
+);
+
+}
+
+function saveGame(){
+
+localStorage.setItem(
+"trix_v2",
+JSON.stringify({
+
+players,
+scores,
+history,
+remaining
+
+})
+
+);
+
+}
+
+function loadGame(){
+
+let data=
+JSON.parse(
+localStorage.getItem("trix_v2")
+||"null"
+);
+
+if(!data)return;
+
+players=data.players||[];
+scores=data.scores||{};
+history=data.history||[];
+remaining=data.remaining||{};
+
+window.addEventListener(
+"load",
+()=>{
+
+document
+.getElementById("setupCard")
+.classList.add("hidden");
+
+document
+.getElementById("gameArea")
+.classList.remove("hidden");
+
+populateOwners();
+renderAll();
+
+});
+
+}
+
+function resetAll(){
+
+if(
+confirm(
+"Delete current game?"
+)
+){
+
+localStorage.removeItem(
+"trix_v2"
+);
+
+location.reload();
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
