@@ -8,8 +8,20 @@
 :root{font:16px/1.5 system-ui,sans-serif;color:#19372f;background:#f7f5ed;--green:#123e34;--line:#d8d8c9;--red:#9e3848}*{box-sizing:border-box}body{margin:0}.wrap{max-width:850px;margin:auto;padding:0 18px}header{background:var(--green);color:#faf5dd;padding:24px 0;border-bottom:4px solid #bd9b58}header .wrap,.row{display:flex;align-items:center;justify-content:space-between;gap:12px}h1,h2,h3{font-family:Georgia,serif;line-height:1.15;margin:0}h1{font-size:clamp(30px,5vw,49px)}header span{font:32px Georgia;color:#dcc696}main{padding-bottom:40px!important}section,details{background:#fffef9;border:1px solid var(--line);border-radius:14px;padding:clamp(15px,3vw,28px);margin:16px 0}h2{font-size:28px}p{margin:9px 0 16px}.sub,small{color:#516559}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.scores{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:15px 0}.score{border-top:2px solid #bd9b58;padding:8px;background:#f4f4eb;overflow-wrap:anywhere}.score b{display:block;font:30px Georgia}.team{font-weight:650}label{display:grid;gap:4px;font-size:.92rem;font-weight:600;min-width:0}input,select,button{font:inherit;max-width:100%}input,select{width:100%;padding:10px;background:white;color:#19372f;border:1px solid #a4b2a9;border-radius:7px;min-height:45px}button,summary{cursor:pointer}button{background:var(--green);color:white;border:0;border-radius:7px;padding:11px 16px;font-weight:650}button.alt{background:#e8eee7;color:var(--green)}button:focus-visible,summary:focus-visible{outline:3px solid #aa8242;outline-offset:2px}fieldset{border:1px solid var(--line);border-radius:8px;margin:14px 0;padding:12px}legend{font-weight:bold}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.alert{color:#922c39;font-weight:600}.alert:empty{display:none}summary{font-weight:700}.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;margin-top:12px;font-size:.9rem}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:right}th:first-child,td:first-child{text-align:left}th{overflow-wrap:anywhere}td button{padding:6px 10px}.contract{margin:15px 0}#preview{font-size:.94rem}.red{color:var(--red)}[hidden]{display:none!important}@media(max-width:550px){.scores{grid-template-columns:1fr 1fr}.row{flex-wrap:wrap}header{padding:17px 0}.grid{gap:8px}fieldset .grid{grid-template-columns:1fr}th,td{padding:6px}.wrap{padding:0 12px}}
 </style>
 </head>
-<body><header><div class="wrap"><h1>Trix Scorekeeper</h1><span lang="ar">تريكس</span></div></header>
-<main class="wrap"><p id="storage" role="status"></p><div id="app"><section><h2>Open the scorekeeper</h2><p>Download this HTML file and open it in your browser to use the interactive scorecard.</p></section></div>
+<body>
+ <!--<header><div class="wrap"><h1>Trix Scorekeeper</h1><span lang="ar">تريكس</span></div></header> --> 
+ 
+ <header>
+    <div class="masthead">
+      <div>
+        <h1>MORE Score Tracker</h1>
+        <p class="credit">Developed by Ammar A</p>
+      </div>
+      <span class="flag" role="img" aria-label="Palestinian flag"></span>
+    </div>
+  </header>
+ 
+ <main class="wrap"><p id="storage" role="status"></p><div id="app"><section><h2>Open the scorekeeper</h2><p>Download this HTML file and open it in your browser to use the interactive scorecard.</p></section></div>
 <details><summary>Scoring rules</summary><p>Each player rules one kingdom and chooses all five contracts once. Play follows the seat order you enter, starting with the chosen king. Highest score wins. Partners sit opposite and combine their scores.</p>
 <ul><li>King of Hearts −75. Each queen −25.</li><li>Each diamond −10. Each trick −15.</li><li>Trix finish order earns +200, +150, +100, +50.</li><li>For an exposed (doubled) king or queen, charge the taker twice and credit the original holder the base value. If the holder takes their own card, credit whoever led that trick. When the holder also led it, the net charge is the ordinary penalty.</li></ul><a href="https://www.pagat.com/compendium/trex.html">Trix rules at Pagat</a></details></main>
 <script>
