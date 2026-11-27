@@ -378,7 +378,13 @@
       seats.forEach(i => {
         byId(`total-${i}`).textContent = String(totals[i]);
       });
-      byId("result").textContent = outcome(totals, names);
+      const result = outcome(totals, names);
+byId("result").textContent = result;
+
+if (result) {
+  const winningScore = Math.max(...totals).toLocaleString();
+  window.alert(`${result}\n\nWinning score: ${winningScore} points`);
+}
       byId("round-title").textContent = `Round ${roundCount + 1}`;
       clearRoundInputs();
       byId("ard-0").focus();
